@@ -80,20 +80,25 @@ let testSchema = "speedvote"
 
 let dataMysql = MySQL()
 
-public func useMysql(_ request: HTTPRequest, response: HTTPResponse) {
-    
+public func LoadUsers()
+{
     // need to make sure something is available.
-    guard dataMysql.connect(host: testHost, user: testUser, password: testPassword ) else {
+    guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
+        else
+    {
         Log.info(message: "Failure connecting to data server \(testHost)")
         return
     }
     
-    defer {
+    defer
+    {
         dataMysql.close()  // defer ensures we close our db connection at the end of this request
     }
     
     //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
-    guard dataMysql.selectDatabase(named: testSchema) && dataMysql.query(statement: "select * from Users limit 1") else {
+    guard dataMysql.selectDatabase(named: testSchema) && dataMysql.query(statement: "select * from Users limit 1")
+        else
+    {
         Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
         
         return
@@ -105,13 +110,9 @@ public func useMysql(_ request: HTTPRequest, response: HTTPResponse) {
     //setup an array to store results
     var resultArray = [[String?]]()
     
-    while let row = results?.next() {
+    while let row = results?.next()
+    {
         resultArray.append(row)
         
     }
-    
-    //return array to http response
-    response.appendBody(string: "<html><title>Mysql Test</title><body>\(resultArray.debugDescription)</body></html>")
-    response.completed()
-    
 }
