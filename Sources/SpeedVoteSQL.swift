@@ -95,7 +95,7 @@ public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil)
         dataMysql.close()  // defer ensures we close our db connection at the end of this request
     }
     
-    let query = "select * from " + table + " limit " + String(limit)
+    var query = "select * from " + table + " limit " + String(limit)
     if whereStr != nil
     {
         query += " " + whereStr!;
