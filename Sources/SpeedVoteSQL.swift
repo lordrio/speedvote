@@ -80,7 +80,7 @@ let testSchema = "speedvote"
 
 let dataMysql = MySQL()
 
-public func LoadUsers()
+public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil)
 {
     // need to make sure something is available.
     guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
@@ -95,8 +95,15 @@ public func LoadUsers()
         dataMysql.close()  // defer ensures we close our db connection at the end of this request
     }
     
+    let query = "select * from " + table + " limit " + String(limit)
+    if whereStr != nil
+    {
+        query += " " + whereStr!;
+    }
+    
     //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
-    guard dataMysql.selectDatabase(named: testSchema) && dataMysql.query(statement: "select * from Users limit 1")
+    guard dataMysql.selectDatabase(named: testSchema) &&
+        dataMysql.query(statement: query)
         else
     {
         Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
