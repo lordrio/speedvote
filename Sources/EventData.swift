@@ -13,7 +13,8 @@ class EventData
     
     var title:String? = nil;
     var desc:String? = nil;
-    var user_id:String? = nil;
+    var user_id:UInt64 = 0;
+    var user_name:String? = nil;
     var choice_id:UInt64 = 0;
     var status = 0;
 }
@@ -22,7 +23,7 @@ class UserData
 {
     var id:UInt64 = 0;
     
-    var username:String? = nil;
+    var user_name:String? = nil;
 }
 
 class CommentData

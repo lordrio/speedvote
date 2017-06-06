@@ -27,6 +27,7 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	return {
 		request, response in
 		// Respond with a simple message.
+        useMysql(request, response: response)
 		response.setHeader(.contentType, value: "text/html")
 		response.appendBody(string: "<html><title>Hello, world!</title><body>Hello, world!</body></html>")
 		// Ensure that response.completed() is called when your processing is done.
