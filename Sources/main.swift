@@ -27,7 +27,6 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	return {
 		request, response in
 		// Respond with a simple message.
-        useMysql()
 		response.setHeader(.contentType, value: "text/html")
 		response.appendBody(string: "<html><title>Hello, world!</title><body>Hello, world!</body></html>")
 		// Ensure that response.completed() is called when your processing is done.
@@ -64,24 +63,40 @@ let confData = [
 				"name":PerfectHTTPServer.HTTPFilter.contentCompression,
 				]
 			]
-		],
-		// Configuration data for another server which:
-		//	* Redirects all traffic back to the first server.
-		[
-			"name":"localhost",
-			"port":port2,
-			"routes":[
-				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.redirect,
-				 "base":"http://localhost:\(port1)"]
-			]
 		]
 	]
 ]
 
+let c = UserData()
+c.FetchUser("uuid2")
+
+/*for i in 1...5
+{
+    let j = EventData()
+    j.title = "title \(i)"
+    j.desc = "desc \(i)"
+    j.status = Status.NotStarted
+    j.CreateEvent(c.id)
+}*/
+
+let list = EventData.GetAllEvents()
+do
+{
+    Log.info(message: "here")
+    let str = try ["data":list].jsonEncodedString()
+    Log.info(message: " + " + str)
+    Log.info(message: "here")
+}
+catch
+{
+    fatalError("\(error)")
+}
+
+#if false
 do {
 	// Launch the servers based on the configuration data.
 	try HTTPServer.launch(configurationData: confData)
 } catch {
 	fatalError("\(error)") // fatal error launching one of the servers
 }
-
+#endif

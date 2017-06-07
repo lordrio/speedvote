@@ -6,68 +6,6 @@
 //
 //
 
-/*
- ===Database speedvote
- 
- == Table structure for table Choices
- 
- |------
- |Column|Type|Null|Default
- |------
- |//**id**//|bigint(20)|No|
- |event_id|bigint(20)|No|
- |title|varchar(45)|Yes|NULL
- |desc|text|Yes|NULL
- |time|date|No|
- |gps|varchar(45)|Yes|NULL
- == Dumping data for table Choices
- 
- == Table structure for table Comments
- 
- |------
- |Column|Type|Null|Default
- |------
- |//**id**//|bigint(20)|No|
- |event_id|bigint(20)|No|
- |user_id|bigint(20)|No|
- |comment|text|Yes|NULL
- |datetime|date|No|
- == Dumping data for table Comments
- 
- == Table structure for table Events
- 
- |------
- |Column|Type|Null|Default
- |------
- |//**id**//|bigint(20)|No|
- |title|varchar(45)|Yes|NULL
- |desc|text|Yes|NULL
- |user_id|bigint(20)|No|
- |choice_id|bigint(20)|No|
- |status|int(11)|No|
- == Dumping data for table Events
- 
- == Table structure for table Users
- 
- |------
- |Column|Type|Null|Default
- |------
- |//**id**//|bigint(20)|No|
- |name|varchar(45)|Yes|NULL
- == Dumping data for table Users
- 
- == Table structure for table Voters
- 
- |------
- |Column|Type|Null|Default
- |------
- |//**id**//|bigint(20)|No|
- |event_id|bigint(20)|No|
- |user_id|bigint(20)|No|
- |choice_id|bigint(20)|No|
- == Dumping data for table Voters
- 
-*/
 import PerfectLib
 import PerfectHTTP
 import MySQL
@@ -80,14 +18,14 @@ let testSchema = "speedvote"
 
 let dataMysql = MySQL()
 
-public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil)
+public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil) -> [[String?]]?
 {
     // need to make sure something is available.
     guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
         else
     {
         Log.info(message: "Failure connecting to data server \(testHost)")
-        return
+        return nil
     }
     
     defer
@@ -95,11 +33,13 @@ public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil)
         dataMysql.close()  // defer ensures we close our db connection at the end of this request
     }
     
-    var query = "select * from " + table + " limit " + String(limit)
+    var query = "select * from \(table)"
     if whereStr != nil
     {
-        query += " " + whereStr!;
+        query += " where \(whereStr!)";
     }
+    
+    query += " limit \(limit)"
     
     //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
     guard dataMysql.selectDatabase(named: testSchema) &&
@@ -108,7 +48,64 @@ public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil)
     {
         Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
         
-        return
+        return nil
+    }
+    
+    //store complete result set
+    let results = dataMysql.storeResults()
+
+    //setup an array to store results
+    var resultArray = [[String?]]()
+    
+    while let row = results?.next()
+    {
+        resultArray.append(row)
+    }
+    
+    return resultArray
+}
+
+public func InsertSQL(_ table:String, val:[String:Any])  -> [[String?]]?
+{
+    // need to make sure something is available.
+    guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
+        else
+    {
+        Log.info(message: "Failure connecting to data server \(testHost)")
+        return nil
+    }
+    
+    defer
+    {
+        dataMysql.close()  // defer ensures we close our db connection at the end of this request
+    }
+    
+    var columns = ""
+    var values = ""
+    for item in val
+    {
+        columns += "\(item.key),"
+        if item.value is String
+        {
+            values += "'\(item.value)',"
+        }
+        else
+        {
+            values += "\(item.value),"
+        }
+    }
+    
+    let query = "insert into \(table)(\(columns)) values(\(values))".replacingOccurrences(of: ",)", with: ")")
+    Log.info(message: query)
+    
+    //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
+    guard dataMysql.selectDatabase(named: testSchema) &&
+        dataMysql.query(statement: query)
+        else
+    {
+        Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
+        
+        return nil
     }
     
     //store complete result set
@@ -120,6 +117,63 @@ public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil)
     while let row = results?.next()
     {
         resultArray.append(row)
-        
     }
+    
+    return resultArray
+}
+
+public func UpdateSQL(_ table:String, val:[String:Any], whereStr:String? = nil)  -> [[String?]]?
+{
+    // need to make sure something is available.
+    guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
+        else
+    {
+        Log.info(message: "Failure connecting to data server \(testHost)")
+        return nil
+    }
+    
+    defer
+    {
+        dataMysql.close()  // defer ensures we close our db connection at the end of this request
+    }
+    
+    var values = ""
+    var whereClause = ""
+    for item in val
+    {
+        values += "\(item.key)= '\(item.value)',"
+    }
+    
+    values.remove(at: values.index(before: values.endIndex))
+    
+    if whereStr != nil
+    {
+        whereClause = "where \(whereStr!)";
+    }
+    
+    let query = "UPDATE \(table) SET \(values) \(whereClause)".replacingOccurrences(of: ",)", with: ")")
+    Log.info(message: query)
+    
+    //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
+    guard dataMysql.selectDatabase(named: testSchema) &&
+        dataMysql.query(statement: query)
+        else
+    {
+        Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
+        
+        return nil
+    }
+    
+    //store complete result set
+    let results = dataMysql.storeResults()
+    
+    //setup an array to store results
+    var resultArray = [[String?]]()
+    
+    while let row = results?.next()
+    {
+        resultArray.append(row)
+    }
+    
+    return resultArray
 }
