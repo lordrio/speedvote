@@ -177,3 +177,42 @@ public func UpdateSQL(_ table:String, val:[String:Any], whereStr:String? = nil) 
     
     return resultArray
 }
+
+public func CustomQuery(_ customStr:String) -> [[String?]]?
+{
+    // need to make sure something is available.
+    guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
+        else
+    {
+        Log.info(message: "Failure connecting to data server \(testHost)")
+        return nil
+    }
+    
+    defer
+    {
+        dataMysql.close()  // defer ensures we close our db connection at the end of this request
+    }
+    
+    //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
+    guard dataMysql.selectDatabase(named: testSchema) &&
+        dataMysql.query(statement: customStr)
+        else
+    {
+        Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
+        
+        return nil
+    }
+    
+    //store complete result set
+    let results = dataMysql.storeResults()
+    
+    //setup an array to store results
+    var resultArray = [[String?]]()
+    
+    while let row = results?.next()
+    {
+        resultArray.append(row)
+    }
+    
+    return resultArray
+}

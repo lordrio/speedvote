@@ -67,8 +67,8 @@ let confData = [
 	]
 ]
 
-let c = UserData()
-c.FetchUser("uuid2")
+//let c = UserData()
+//c.FetchUser("uuid2")
 
 /*for i in 1...5
 {
@@ -78,6 +78,9 @@ c.FetchUser("uuid2")
     j.status = Status.NotStarted
     j.CreateEvent(c.id)
 }*/
+
+//let t = UserData().GrabOne((UserData().propertyNames()), whereStr: "uuid = \"uuid2\"")
+//Log.debug(message: String(describing: t))
 
 let list = EventData.GetAllEvents()
 do

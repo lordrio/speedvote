@@ -21,50 +21,58 @@ class UserData : BaseData
      |name|varchar(45)|Yes|NULL
      == Dumping data for table Users
      */
-    private let tableName = "Users"
+    override var _tableName:String { get{ return "Users" } }
     
     public var id:UInt64 = 0;
     
-    public var user_name:String? = nil;
+    public var name:String? = nil;
     public var uuid:String? = nil;
     
     public func LoadUser(_ ident: UInt64)
     {
-        var res = SelectSQL(tableName, limit: 1, whereStr: "id = \"\(ident)\"")
+        let res = GrabOne(propertyNames(), whereStr: "id = \"\(ident)\"")
+        
+        if res.isEmpty
+        {
+            return
+        }
+        
+        let r = res as [String:String]
         
         // fill in the data
-        id = UInt64((res?[0][0])!)!
-        user_name = String((res?[0][1])!)!
-        uuid = String((res?[0][2])!)!
+        id = UInt64(r["id"]!)!
+        name = String(r["name"]!)!
+        uuid = String(r["uuid"]!)!
     }
     
     public func FetchUser(_ userUUID: String)
     {
-        var res = SelectSQL(tableName, limit: 1, whereStr: "uuid = \"\(userUUID)\"")
+        var res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
         
-        if res == nil || res?.count == 0
+        if res.isEmpty
         {
-            _ = InsertSQL(tableName, val: ["name":"無名", "uuid":userUUID])
+            _ = InsertSQL(_tableName, val: ["name":"無名", "uuid":userUUID])
             
             // insert not returning result, fetch again to get id
-            res = SelectSQL(tableName, limit: 1, whereStr: "uuid = \"\(userUUID)\"")
+            res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
+            
+            if res.isEmpty
+            {
+                return
+            }
         }
         
+        let r = res as [String:String]
+        
         // fill in the data
-        id = UInt64((res?[0][0])!)!
-        user_name = String((res?[0][1])!)!
-        uuid = String((res?[0][2])!)!
+        id = UInt64(r["id"]!)!
+        name = String(r["name"]!)!
+        uuid = String(r["uuid"]!)!
     }
     
     public func UpdateName(Name:String)
     {
-        _ = UpdateSQL(tableName, val: ["name":Name], whereStr: "uuid = \"\(uuid!)\"" )
-        user_name = Name
-    }
-    
-    public func ToJSON() -> String
-    {
-        let ret = ["id": id, "user_name":user_name!, "uuid":uuid!] as [String : Any];
-        return super.ToJSON(ret)
+        _ = UpdateSQL(_tableName, val: ["name":Name], whereStr: "uuid = \"\(uuid!)\"" )
+        name = Name
     }
 }

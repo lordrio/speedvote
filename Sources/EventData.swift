@@ -43,8 +43,9 @@ class EventData : BaseData
     public var status = Status.NotStarted
     
     // TODO: add on later
-    var invited_user:[UInt64]? = nil
-    var endDate:Date = Date() // end date
+    public var invited_user:[UInt64]? = nil
+    public var endDate:Date = Date() // end date
+    public var invite_reference:String = ""
     
     /// Returns the JSON encoded String for any JSONConvertible type.
     public override func jsonEncodedString() throws -> String {
@@ -71,7 +72,7 @@ class EventData : BaseData
     /// Get all the event : TODO filter it to user
     public static func GetAllEvents(_ Uuid:String = "") -> [EventData]
     {
-        let res = SelectSQL(tableName, limit: 999999)
+        let res = SelectSQL(tableName, limit: 100, whereStr: "Status != \(Status.Finished.rawValue)")
         var list = [EventData]()
         for item in res!
         {
@@ -98,6 +99,6 @@ class EventData : BaseData
         
         let user = UserData()
         user.LoadUser(user_id)
-        user_name = user.user_name
+        user_name = user.name
     }
 }

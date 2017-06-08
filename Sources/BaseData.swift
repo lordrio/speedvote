@@ -9,24 +9,62 @@
 import Foundation
 import PerfectLib
 
-class BaseData :JSONConvertible
+protocol PropertyNames {
+    func propertyNames() -> [String]
+}
+
+extension PropertyNames
 {
+    func propertyNames() -> [String] {
+        return Mirror(reflecting: self).children.flatMap { $0.label }
+    }
+}
+
+class BaseData : JSONConvertible, PropertyNames
+{
+    var _tableName:String { get{ return "" } }
     /// Returns the JSON encoded String for any JSONConvertible type.
     public func jsonEncodedString() throws -> String {
         return ""
     }
     
-    func ToJSON(_ ret:[String:Any]) -> String
+    func GrabOne(_ property:[String], whereStr:String) -> [String : String]
     {
-        var json = ""
-        do
+        //var query = ""
+        var spl = property
+        for (i,data) in spl.enumerated().reversed()
         {
-            json = try ret.jsonEncodedString()
+            if data.characters.first! == "_"
+            {
+                Log.info(message: "removing \(data)")
+                spl.remove(at: i)
+            }
         }
-        catch
+        
+        Log.info(message: String(describing:spl))
+        
+        let colname = spl.joined(separator: ",")
+        let query = "SELECT \(colname) FROM \(_tableName) WHERE \(whereStr) LIMIT 1"
+        
+        //Log.info(message: query)
+        let result = CustomQuery(query)
+        //Log.info(message: String(describing:result))
+        
+        var ret = [String:String]()
+        if(result == nil || result?.count == 0)
         {
-            json = ""
+            return ret
         }
-        return json
+        
+        let first = result?.first
+        
+        var cnt = 0;
+        for i in spl
+        {
+            ret[i] = first?[cnt]!
+            cnt += 1
+        }
+        
+        return ret
     }
 }
