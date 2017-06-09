@@ -56,21 +56,37 @@ class UserData : BaseData
         uuid = String(r["uuid"]!)!
     }
     
-    public func FetchUser(_ userUUID: String)
+    func CreateEmptyUserWithUUID(_ Uuid:String)
     {
-        var res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
-        
-        if res.isEmpty
-        {
-            _ = InsertSQL(_tableName, val: ["name":"無名", "uuid":userUUID])
-            
-            // insert not returning result, fetch again to get id
-            res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
-            
-            if res.isEmpty
+        Transaction { (sql) in
+            guard sql.query(statement: "start transaction")
+            else
             {
                 return
             }
+            let query = CreateInsert(_tableName, val: ["name":"無名", "uuid":Uuid])
+            guard sql.query(statement: query)
+            else
+            {
+                return
+            }
+            
+            guard sql.query(statement: "commit")
+                else
+            {
+                return
+            }
+        }
+    }
+    
+    public func FetchUser(_ userUUID: String)
+    {
+        let res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
+        
+        if res.isEmpty
+        {
+            CreateEmptyUserWithUUID(userUUID)
+            return
         }
         
         let r = res as [String:String]

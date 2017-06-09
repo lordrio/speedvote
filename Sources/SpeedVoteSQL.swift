@@ -65,6 +65,28 @@ public func SelectSQL(_ table:String, limit:Int = 1, whereStr:String? = nil) -> 
     return resultArray
 }
 
+public func CreateInsert(_ table:String, val:[String:Any]) -> String
+{
+    var columns = ""
+    var values = ""
+    for item in val
+    {
+        columns += "\(item.key),"
+        if item.value is String
+        {
+            values += "'\(item.value)',"
+        }
+        else
+        {
+            values += "\(item.value),"
+        }
+    }
+    
+    let query = "insert into \(table)(\(columns)) values(\(values))".replacingOccurrences(of: ",)", with: ")")
+    debugPrint(query)
+    return query
+}
+
 public func InsertSQL(_ table:String, val:[String:Any])  -> [[String?]]?
 {
     // need to make sure something is available.
@@ -96,7 +118,7 @@ public func InsertSQL(_ table:String, val:[String:Any])  -> [[String?]]?
     }
     
     let query = "insert into \(table)(\(columns)) values(\(values))".replacingOccurrences(of: ",)", with: ")")
-    Log.info(message: query)
+    debugPrint(query)
     
     //set database to be used, this example assumes presence of a users table and run a raw query, return failure message on a error
     guard dataMysql.selectDatabase(named: testSchema) &&
@@ -217,7 +239,7 @@ public func CustomQuery(_ customStr:String) -> [[String?]]?
     return resultArray
 }
 
-public func Transaction(_ startFunc:(), endFunc:())
+public func Transaction(_ startFunc:(_ sqlStore:MySQL) throws -> ())
 {
     guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
         else
@@ -228,6 +250,7 @@ public func Transaction(_ startFunc:(), endFunc:())
     
     defer
     {
+        debugPrint("close")
         dataMysql.close()  // defer ensures we close our db connection at the end of this request
     }
     
@@ -236,5 +259,15 @@ public func Transaction(_ startFunc:(), endFunc:())
     {
         Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
         return
+    }
+    
+    // done selecting
+    do
+    {
+        try startFunc(dataMysql)
+    }
+    catch
+    {
+        fatalError("\(error)")
     }
 }

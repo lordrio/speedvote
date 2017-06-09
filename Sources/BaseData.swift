@@ -28,7 +28,7 @@ class BaseData : JSONConvertible, PropertyNames
         return ""
     }
     
-    func GrabOne(_ property:[String], whereStr:String) -> [String : String]
+    func GrabOneSQLStatement(_ property:[String], whereStr:String) -> (String, [String])
     {
         //var query = ""
         var spl = property
@@ -45,6 +45,14 @@ class BaseData : JSONConvertible, PropertyNames
         
         let colname = spl.joined(separator: ",")
         let query = "SELECT \(colname) FROM \(_tableName) WHERE \(whereStr) LIMIT 1"
+        
+        return (query, spl)
+    }
+    
+    func GrabOne(_ property:[String], whereStr:String) -> [String : String]
+    {
+        //var query = ""
+        let (query, spl) = GrabOneSQLStatement(property, whereStr: whereStr)
         
         //Log.info(message: query)
         let result = CustomQuery(query)
