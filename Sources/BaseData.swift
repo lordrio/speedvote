@@ -41,7 +41,7 @@ class BaseData : JSONConvertible, PropertyNames
             }
         }
         
-        Log.info(message: String(describing:spl))
+        //Log.info(message: String(describing:spl))
         
         let colname = spl.joined(separator: ",")
         let query = "SELECT \(colname) FROM \(_tableName) WHERE \(whereStr) LIMIT 1"

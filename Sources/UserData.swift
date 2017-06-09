@@ -25,8 +25,19 @@ class UserData : BaseData
     
     public var id:UInt64 = 0;
     
-    public var name:String? = nil;
-    public var uuid:String? = nil;
+    public var name:String = "";
+    public var uuid:String = "";
+    
+    override func jsonEncodedString() throws -> String {
+        do
+        {
+            return try ["id": id, "name": name, "uuid": uuid].jsonEncodedString()
+        }
+        catch
+        {
+            fatalError("\(error)")
+        }
+    }
     
     public func LoadUser(_ ident: UInt64)
     {
@@ -72,7 +83,7 @@ class UserData : BaseData
     
     public func UpdateName(Name:String)
     {
-        _ = UpdateSQL(_tableName, val: ["name":Name], whereStr: "uuid = \"\(uuid!)\"" )
+        _ = UpdateSQL(_tableName, val: ["name":Name], whereStr: "uuid = \"\(uuid)\"" )
         name = Name
     }
 }

@@ -31,12 +31,12 @@ enum Status : Int
 
 class EventData : BaseData
 {
-    private static let tableName = "Events"
+    override var _tableName:String { get{ return "Events" } }
     
     public var id:UInt64 = 0;
     
     public var title:String = ""
-    public var desc:String = ""
+    public var description:String = ""
     public var user_id:UInt64 = 0
     public var user_name:String? = ""
     //var choice_id:UInt64 = 0
@@ -51,49 +51,60 @@ class EventData : BaseData
     public override func jsonEncodedString() throws -> String {
         do
         {
-            return try ["id": id, "title":title, "desc":desc, "user_id":user_id, "status":status.rawValue].jsonEncodedString()
+            return try ["id": id, "title":title, "desc":description, "user_id":user_id, "status":status.rawValue].jsonEncodedString()
         }
         catch
         {
             fatalError("\(error)")
         }
     }
+    
+    public func LoadEvent(_ event_id:UInt64)
+    {
+        let r = GrabOne(propertyNames(), whereStr: "id = \(event_id)")
+        
+        user_id = UInt64(r["user_id"]!)!
+        id = UInt64(r["id"]!)!
+        title = String(r["title"]!)!
+        status = Status(rawValue: Int(r["status"]!)!)!
+        description = String(r["description"]!)!
+        
+        let user = UserData()
+        user.LoadUser(user_id)
+        user_name = user.name
+    }
 
     /// Create an event
     public func CreateEvent(_ UserId:UInt64)
     {
         let data = ["title": title,
-                    "description":desc,
+                    "description":description,
                     "user_id":UserId,
                     "status":status.rawValue] as [String : Any]
-        _ = InsertSQL(EventData.tableName, val: data)
+        _ = InsertSQL(_tableName, val: data)
     }
     
     /// Get all the event : TODO filter it to user
-    public static func GetAllEvents(_ Uuid:String = "") -> [EventData]
+    public func GetAllEvents(_ Uuid:String = "") -> [EventData]
     {
-        let res = SelectSQL(tableName, limit: 100, whereStr: "Status != \(Status.Finished.rawValue)")
+        let res = SelectSQL(_tableName, limit: 100, whereStr: "Status != \(Status.Finished.rawValue)")
         var list = [EventData]()
         for item in res!
         {
-            let i = EventData(item)
+            let i = EventData()
+            i.LoadFromSQL(item)
             list.append(i)
         }
         
         return list
     }
     
-    // empty init
-    public override init()
-    {
-    }
-    
     // init with sqldata
-    public init(_ sqlData:[String?])
+    func LoadFromSQL(_ sqlData:[String?])
     {
         id = UInt64(sqlData[0]!)!
         title = String(sqlData[1]!)!
-        desc = String(sqlData[2]!)!
+        description = String(sqlData[2]!)!
         user_id = UInt64(sqlData[3]!)!
         status = Status(rawValue: Int(sqlData[5]!)!)!;
         

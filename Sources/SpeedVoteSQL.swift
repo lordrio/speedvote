@@ -216,3 +216,25 @@ public func CustomQuery(_ customStr:String) -> [[String?]]?
     
     return resultArray
 }
+
+public func Transaction(_ startFunc:(), endFunc:())
+{
+    guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
+        else
+    {
+        Log.info(message: "Failure connecting to data server \(testHost)")
+        return
+    }
+    
+    defer
+    {
+        dataMysql.close()  // defer ensures we close our db connection at the end of this request
+    }
+    
+    guard dataMysql.selectDatabase(named: testSchema)
+        else
+    {
+        Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
+        return
+    }
+}

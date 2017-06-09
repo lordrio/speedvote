@@ -74,7 +74,7 @@ let confData = [
 {
     let j = EventData()
     j.title = "title \(i)"
-    j.desc = "desc \(i)"
+    j.description = "desc \(i)"
     j.status = Status.NotStarted
     j.CreateEvent(c.id)
 }*/
@@ -82,7 +82,7 @@ let confData = [
 //let t = UserData().GrabOne((UserData().propertyNames()), whereStr: "uuid = \"uuid2\"")
 //Log.debug(message: String(describing: t))
 
-let list = EventData.GetAllEvents()
+let list = EventData().GetAllEvents()
 do
 {
     Log.info(message: "here")
