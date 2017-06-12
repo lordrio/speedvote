@@ -69,8 +69,8 @@ let confData = [
 
 let c = UserData()
 c.FetchUser("pipi3")
-/*let x = try? c.jsonEncodedString()
-debugPrint(x as Any)*/
+let x = try? c.jsonEncodedString()
+debugPrint(x as Any)
 
 /*for i in 1...5
 {

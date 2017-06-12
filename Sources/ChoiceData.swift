@@ -120,16 +120,16 @@ class ChoicesData : BaseData
         gps = String(r["gps"]!)!
     }
     
-    public func LoadFromJson(_ json:String)
-    {
-        if let decoded = try? json.jsonDecode() as? [String:Any] {
-            for (key, value) in decoded!
-            {
-                if let value as? JSONConvertibleNull
-                {
-                    print("The key \"\(key)\" had a null value")
-                }
-            }
-        }
-    }
+//    public func LoadFromJson(_ json:String)
+//    {
+//        if let decoded = try? json.jsonDecode() as? [String:Any] {
+//            for (key, value) in decoded!
+//            {
+//                if let value as? JSONConvertibleNull
+//                {
+//                    print("The key \"\(key)\" had a null value")
+//                }
+//            }
+//        }
+//    }
 }

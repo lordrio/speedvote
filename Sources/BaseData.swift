@@ -75,4 +75,26 @@ class BaseData : JSONConvertible, PropertyNames
         
         return ret
     }
+    
+    func GrabWithDataVar(_ data:[DataVarProtocol], whereStr:String) -> Bool
+    {
+        var prop = [String]()
+        data.forEach { (d) in
+            prop.append(d.GetVariableName())
+        }
+        
+        let result = GrabOne(prop, whereStr: whereStr)
+        
+        if result.isEmpty
+        {
+            return false
+        }
+        
+        for i in data
+        {
+            i.Parse(result)
+        }
+        
+        return true
+    }
 }

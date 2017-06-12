@@ -28,10 +28,15 @@ class UserData : BaseData
     public var name:String = "";
     public var uuid:String = "";
     
+    // experiment
+    public var id$:DataVar<UInt64> = DataVar<UInt64>("id", 0)
+    public var name$:DataVar<String> = DataVar<String>("name", "")
+    public var uuid$:DataVar<String> = DataVar<String>("uuid", "")
+    
     override func jsonEncodedString() throws -> String {
         do
         {
-            return try ["id": id, "name": name, "uuid": uuid].jsonEncodedString()
+            return try [id$, name$, uuid$].jsonEncodedString()
         }
         catch
         {
@@ -83,20 +88,13 @@ class UserData : BaseData
     
     public func FetchUser(_ userUUID: String)
     {
-        let res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
+        //let res = GrabOne(propertyNames(), whereStr: "uuid = \"\(userUUID)\"")
         
-        if res.isEmpty
+        if GrabWithDataVar([id$, name$, uuid$], whereStr: "uuid = \"\(userUUID)\"")
         {
-            CreateEmptyUserWithUUID(userUUID)
+            //CreateEmptyUserWithUUID(userUUID)
             return
         }
-        
-        let r = res as [String:String]
-        
-        // fill in the data
-        id = UInt64(r["id"]!)!
-        name = String(r["name"]!)!
-        uuid = String(r["uuid"]!)!
     }
     
     public func UpdateName(Name:String)
