@@ -34,9 +34,9 @@ class ChoicesData : BaseData
     var gps:String? = nil;
     
     /// load all the choices
-    public func LoadAllChoices(_ eventId:UInt64)
+    public func LoadAllChoices(_ eventId:UInt64) -> [ChoicesData]
     {
-        let res = SelectSQL(_tableName, limit: 100, whereStr: "event_id != \(eventId)")
+        let res = SelectSQL(_tableName, limit: 100, whereStr: "event_id == \(eventId)")
         var list = [ChoicesData]()
         for item in res!
         {
@@ -44,10 +44,55 @@ class ChoicesData : BaseData
             i.LoadFromSQL(item)
             list.append(i)
         }
+        
+        return list
     }
     
     // save all the choices
-    public static func SaveAllChoices()
+    public static func SaveAllChoices(_ list:[ChoicesData], eventId:UInt64)
+    {
+        _ = Transaction { (sql) -> Bool in
+            guard sql.query(statement: "start transaction")
+                else
+            {
+                return false
+            }
+            
+            let tableName = ChoicesData()._tableName
+            
+            let del_query = "DETELE FROM \(tableName) WHERE event_id == \(eventId)"
+            guard sql.query(statement: del_query)
+                else
+            {
+                return false
+            }
+            
+            for i in list
+            {
+                let data = ["title": i.title!,
+                            "description": i.description!,
+                            "event_id": eventId,
+                            "time": i.time,
+                            "gps": i.gps!] as [String : Any]
+                let query = CreateInsert(tableName, val: data)
+                guard sql.query(statement: query)
+                    else
+                {
+                    return false
+                }
+            }
+            
+            guard sql.query(statement: "commit")
+                else
+            {
+                return false
+            }
+            
+            return true
+        }
+    }
+    
+    public func SaveChoice()
     {
         
     }
@@ -73,5 +118,18 @@ class ChoicesData : BaseData
         description = String(r["description"]!)!
         //time = Status(rawValue: Int(sqlData[4]!)!)!;
         gps = String(r["gps"]!)!
+    }
+    
+    public func LoadFromJson(_ json:String)
+    {
+        if let decoded = try? json.jsonDecode() as? [String:Any] {
+            for (key, value) in decoded!
+            {
+                if let value as? JSONConvertibleNull
+                {
+                    print("The key \"\(key)\" had a null value")
+                }
+            }
+        }
     }
 }

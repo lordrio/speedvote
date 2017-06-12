@@ -81,7 +81,27 @@ class EventData : BaseData
                     "description":description,
                     "user_id":UserId,
                     "status":status.rawValue] as [String : Any]
-        _ = InsertSQL(_tableName, val: data)
+        _ = Transaction({ (sql) -> Bool in
+            guard sql.query(statement: "start transaction")
+                else
+            {
+                return false
+            }
+            let query = CreateInsert(_tableName, val: data)
+            guard sql.query(statement: query)
+                else
+            {
+                return false
+            }
+            
+            guard sql.query(statement: "commit")
+                else
+            {
+                return false
+            }
+            
+            return true
+        })
     }
     
     /// Get all the event : TODO filter it to user

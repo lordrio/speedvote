@@ -87,6 +87,27 @@ public func CreateInsert(_ table:String, val:[String:Any]) -> String
     return query
 }
 
+public func CreateUpdate(_ table:String, val:[String:Any], whereStr:String? = nil) -> String
+{
+    var values = ""
+    var whereClause = ""
+    for item in val
+    {
+        values += "\(item.key)= '\(item.value)',"
+    }
+    
+    values.remove(at: values.index(before: values.endIndex))
+    
+    if whereStr != nil
+    {
+        whereClause = "where \(whereStr!)";
+    }
+    
+    let query = "UPDATE \(table) SET \(values) \(whereClause)".replacingOccurrences(of: ",)", with: ")")
+    debugPrint(query)
+    return query
+}
+
 public func InsertSQL(_ table:String, val:[String:Any])  -> [[String?]]?
 {
     // need to make sure something is available.
@@ -239,13 +260,13 @@ public func CustomQuery(_ customStr:String) -> [[String?]]?
     return resultArray
 }
 
-public func Transaction(_ startFunc:(_ sqlStore:MySQL) throws -> ())
+public func Transaction(_ startFunc:(_ sqlStore:MySQL) throws -> Bool) -> Bool
 {
     guard dataMysql.connect(host: testHost, user: testUser, password: testPassword )
         else
     {
         Log.info(message: "Failure connecting to data server \(testHost)")
-        return
+        return false
     }
     
     defer
@@ -258,16 +279,19 @@ public func Transaction(_ startFunc:(_ sqlStore:MySQL) throws -> ())
         else
     {
         Log.info(message: "Failure: \(dataMysql.errorCode()) \(dataMysql.errorMessage())")
-        return
+        return false
     }
     
     // done selecting
     do
     {
-        try startFunc(dataMysql)
+        let ret = try startFunc(dataMysql)
+        return ret
     }
     catch
     {
         fatalError("\(error)")
     }
+    
+    return true
 }

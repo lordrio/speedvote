@@ -58,24 +58,26 @@ class UserData : BaseData
     
     func CreateEmptyUserWithUUID(_ Uuid:String)
     {
-        Transaction { (sql) in
+        _ = Transaction { (sql) in
             guard sql.query(statement: "start transaction")
             else
             {
-                return
+                return false
             }
             let query = CreateInsert(_tableName, val: ["name":"無名", "uuid":Uuid])
             guard sql.query(statement: query)
             else
             {
-                return
+                return false
             }
             
             guard sql.query(statement: "commit")
                 else
             {
-                return
+                return false
             }
+            
+            return true
         }
     }
     
@@ -99,7 +101,27 @@ class UserData : BaseData
     
     public func UpdateName(Name:String)
     {
-        _ = UpdateSQL(_tableName, val: ["name":Name], whereStr: "uuid = \"\(uuid)\"" )
+        _ =  Transaction { (sql) in
+            guard sql.query(statement: "start transaction")
+                else
+            {
+                return false
+            }
+            let query = CreateUpdate(_tableName, val: ["name":Name], whereStr: "uuid = \"\(uuid)\"" )
+            guard sql.query(statement: query)
+                else
+            {
+                return false
+            }
+            
+            guard sql.query(statement: "commit")
+                else
+            {
+                return false
+            }
+            
+            return true
+        }
         name = Name
     }
 }
