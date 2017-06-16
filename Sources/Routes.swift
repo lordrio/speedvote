@@ -10,7 +10,7 @@ import PerfectLib
 import PerfectHTTP
 
 public func makeWebDemoRoutes() -> Routes {
-    var routes = Routes()
+    let routes = Routes()
     
 //    routes.add(method: .get, uri: "/", handler: WebHandlers.indexHandlerGet)
 //    routes.add(method: .get, uri: "/nocsrf", handler: WebHandlers.formNoCSRF)

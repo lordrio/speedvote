@@ -18,6 +18,11 @@ extension PropertyNames
     func propertyNames() -> [String] {
         return Mirror(reflecting: self).children.flatMap { $0.label }
     }
+    
+    func listOfProperty() -> [Any]
+    {
+        return Mirror(reflecting: self).children.flatMap { $0.value }
+    }
 }
 
 class BaseData : JSONConvertible, PropertyNames
@@ -28,7 +33,12 @@ class BaseData : JSONConvertible, PropertyNames
         return ""
     }
     
-    func GrabOneSQLStatement(_ property:[String], whereStr:String) -> (String, [String])
+    required init()
+    {
+        
+    }
+    
+    func GrabSQLStatement(_ property:[String], whereStr:String, limit:Int = 1) -> (String, [String])
     {
         //var query = ""
         var spl = property
@@ -44,7 +54,7 @@ class BaseData : JSONConvertible, PropertyNames
         //Log.info(message: String(describing:spl))
         
         let colname = spl.joined(separator: ",")
-        let query = "SELECT \(colname) FROM \(_tableName) WHERE \(whereStr) LIMIT 1"
+        let query = "SELECT \(colname) FROM \(_tableName) WHERE \(whereStr) LIMIT \(limit)"
         
         return (query, spl)
     }
@@ -52,7 +62,7 @@ class BaseData : JSONConvertible, PropertyNames
     func GrabOne(_ property:[String], whereStr:String) -> [String : String]
     {
         //var query = ""
-        let (query, spl) = GrabOneSQLStatement(property, whereStr: whereStr)
+        let (query, spl) = GrabSQLStatement(property, whereStr: whereStr)
         
         //Log.info(message: query)
         let result = CustomQuery(query)
@@ -76,25 +86,45 @@ class BaseData : JSONConvertible, PropertyNames
         return ret
     }
     
-    func GrabWithDataVar(_ data:[DataVarProtocol], whereStr:String) -> Bool
+    func GrabMultiple(_ property:[String], whereStr:String) -> [[String : String]]
     {
-        var prop = [String]()
-        data.forEach { (d) in
-            prop.append(d.GetVariableName())
-        }
+        //var query = ""
+        let (query, spl) = GrabSQLStatement(property, whereStr: whereStr, limit: 100)
         
-        let result = GrabOne(prop, whereStr: whereStr)
+        //Log.info(message: query)
+        let result = CustomQuery(query)
+        //Log.info(message: String(describing:result))
         
-        if result.isEmpty
+        var ret = [[String:String]]()
+        if(result == nil || result?.count == 0)
         {
-            return false
+            return ret
         }
         
-        for i in data
+        for first in result!
         {
-            i.Parse(result)
+            var newret = [String:String]()
+            var cnt = 0;
+            for i in spl
+            {
+                newret[i] = first[cnt]!
+                cnt += 1
+            }
+            
+            ret.append(newret)
         }
         
-        return true
+        return ret
+    }
+    
+    func ConvertToJsonDic(_ stuff:[DataVarProtocol]) -> [String:Any]
+    {
+        var d = [String:Any]()
+        for i in stuff
+        {
+            d[i.Key] = i.SQLSafeValue
+        }
+        
+        return d
     }
 }

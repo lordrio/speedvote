@@ -33,14 +33,14 @@ class EventData : BaseData
 {
     override var _tableName:String { get{ return "Events" } }
     
-    public var id:UInt64 = 0;
+    // experimental
+    public var id:DataVar<UInt64> = DataVar<UInt64>("id", 0)
     
-    public var title:String = ""
-    public var description:String = ""
-    public var user_id:UInt64 = 0
-    public var user_name:String? = ""
-    //var choice_id:UInt64 = 0
-    public var status = Status.NotStarted
+    public var title:DataVar<String> = DataVar<String>("title", "")
+    public var description:DataVar<String> = DataVar<String>("description", "")
+    public var user_id:DataVar<UInt64> = DataVar<UInt64>("user_id", 0)
+    public var user_name:DataVar<String> = DataVar<String>("user_name", "")
+    public var status:EnumDataVar<Status> = EnumDataVar<Status>("status", Status.NotStarted)
     
     // TODO: add on later
     public var invited_user:[UInt64]? = nil
@@ -51,85 +51,11 @@ class EventData : BaseData
     public override func jsonEncodedString() throws -> String {
         do
         {
-            return try ["id": id, "title":title, "desc":description, "user_id":user_id, "status":status.rawValue].jsonEncodedString()
+            return try ConvertToJsonDic([id, title, description, user_id, status, user_name]).jsonEncodedString()
         }
         catch
         {
             fatalError("\(error)")
         }
-    }
-    
-    public func LoadEvent(_ event_id:UInt64)
-    {
-        let r = GrabOne(propertyNames(), whereStr: "id = \(event_id)")
-        
-        user_id = UInt64(r["user_id"]!)!
-        id = UInt64(r["id"]!)!
-        title = String(r["title"]!)!
-        status = Status(rawValue: Int(r["status"]!)!)!
-        description = String(r["description"]!)!
-        
-        let user = UserData()
-        user.LoadUser(user_id)
-        user_name = user.name
-    }
-
-    /// Create an event
-    public func CreateEvent(_ UserId:UInt64)
-    {
-        let data = ["title": title,
-                    "description":description,
-                    "user_id":UserId,
-                    "status":status.rawValue] as [String : Any]
-        _ = Transaction({ (sql) -> Bool in
-            guard sql.query(statement: "start transaction")
-                else
-            {
-                return false
-            }
-            let query = CreateInsert(_tableName, val: data)
-            guard sql.query(statement: query)
-                else
-            {
-                return false
-            }
-            
-            guard sql.query(statement: "commit")
-                else
-            {
-                return false
-            }
-            
-            return true
-        })
-    }
-    
-    /// Get all the event : TODO filter it to user
-    public func GetAllEvents(_ Uuid:String = "") -> [EventData]
-    {
-        let res = SelectSQL(_tableName, limit: 100, whereStr: "Status != \(Status.Finished.rawValue)")
-        var list = [EventData]()
-        for item in res!
-        {
-            let i = EventData()
-            i.LoadFromSQL(item)
-            list.append(i)
-        }
-        
-        return list
-    }
-    
-    // init with sqldata
-    func LoadFromSQL(_ sqlData:[String?])
-    {
-        id = UInt64(sqlData[0]!)!
-        title = String(sqlData[1]!)!
-        description = String(sqlData[2]!)!
-        user_id = UInt64(sqlData[3]!)!
-        status = Status(rawValue: Int(sqlData[5]!)!)!;
-        
-        let user = UserData()
-        user.LoadUser(user_id)
-        user_name = user.name
     }
 }

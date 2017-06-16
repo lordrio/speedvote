@@ -67,24 +67,24 @@ let confData = [
 	]
 ]
 
-let c = UserData()
+let c = UserController()
 c.FetchUser("pipi3")
-let x = try? c.jsonEncodedString()
+let x = try? c.userData.jsonEncodedString()
 debugPrint(x as Any)
 
-/*for i in 1...5
+/*let ctrl = EventController()
+for i in 1...5
 {
     let j = EventData()
-    j.title = "title \(i)"
-    j.description = "desc \(i)"
-    j.status = Status.NotStarted
-    j.CreateEvent(c.id)
+    j.title.Value = "title \(i)"
+    j.description.Value = "desc \(i)"
+    j.status.Value = Status.NotStarted
+    j.user_id.Value = c.userData.id.Value
+    ctrl.CreateEvent(j)
 }*/
 
-//let t = UserData().GrabOne((UserData().propertyNames()), whereStr: "uuid = \"uuid2\"")
-//Log.debug(message: String(describing: t))
 
-let list = EventData().GetAllEvents()
+let list = EventController().GetAllEvents(c.userData.id.Value as! UInt64)
 do
 {
     Log.info(message: "here")
