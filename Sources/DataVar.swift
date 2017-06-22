@@ -137,9 +137,9 @@ class DateDataVar<T> : DataVar<T>
     override func SetData(_ val:Any)
     {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         data = dateFormatter.date(from: val as! String) as? T
-        debugPrint("data is Set " + String(describing: data))
+        //debugPrint("data is Set " + String(describing: data))
     }
     
     override var SQLSafeValue: Any
@@ -147,7 +147,7 @@ class DateDataVar<T> : DataVar<T>
         get
         {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             return dateFormatter.string(from: (data as! Date))
         }
     }

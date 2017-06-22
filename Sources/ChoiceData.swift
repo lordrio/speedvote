@@ -32,4 +32,15 @@ class ChoicesData : BaseData
     public var description:DataVar<String> = DataVar<String>("description", "")
     public var gps:DataVar<String> = DataVar<String>("gps", "")
     public var time:DateDataVar<Date> = DateDataVar<Date>("time", Date())
+    
+    public override func jsonEncodedString() throws -> String {
+        do
+        {
+            return try ConvertToJsonDic([id, title, description, event_id, gps, time]).jsonEncodedString()
+        }
+        catch
+        {
+            fatalError("\(error)")
+        }
+    }
 }

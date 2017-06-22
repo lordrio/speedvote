@@ -19,26 +19,20 @@ class ChoiceController: BaseController
         return choice
     }
     
-//    public func LoadAllChoices(_ event_id:UInt64 = 0) -> [EventData]
-//    {
-//        let res = SelectSQL(event._tableName, limit: 100, whereStr: "status != \(Status.Finished.rawValue) AND user_id = \(user_id)")
-//        var list = [EventData]()
-//        for item in res!
-//        {
-//            let i = EventData()
-//            i.LoadFromSQL(item)
-//            list.append(i)
-//        }
-//        
-//        return list
-//    }
+    public func LoadAllChoices(_ event_id:UInt64 = 0) -> [ChoicesData]
+    {
+        let choice = ChoicesData()
+        let res = GrabWithDataVar([choice.id.Key, choice.event_id.Key, choice.title.Key, choice.description.Key, choice.gps.Key, choice.time.Key], whereStr: "event_id = \(event_id)", base: choice) as [ChoicesData]
+        
+        return res
+    }
     
     public func CreateChoice(_ choice:ChoicesData)
     {
         let data = ["title": choice.title.Value,
                     "description":choice.description.Value,
                     "event_id":choice.event_id.Value,
-                    "gps": choice.gps,
+                    "gps": choice.gps.Value,
                     "time": choice.time.SQLSafeValue,
             ] as [String : Any]
         _ = Transaction({ (sql) -> Bool in

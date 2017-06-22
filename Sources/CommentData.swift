@@ -9,8 +9,9 @@
 import Foundation
 import PerfectLib
 
-class CommentData
+class CommentData : BaseData
 {
+    override var _tableName:String { get{ return "Comments" } }
     /*== Table structure for table Comments
      
      |------
@@ -22,13 +23,22 @@ class CommentData
      |comment|text|Yes|NULL
      |datetime|date|No|
      == Dumping data for table Comments*/
-    var id:UInt64 = 0;
+    public var id:DataVar<UInt64> = DataVar<UInt64>("id", 0)
+    public var event_id:DataVar<UInt64> = DataVar<UInt64>("event_id", 0)
+    public var user_id:DataVar<UInt64> = DataVar<UInt64>("user_id", 0)
     
-    var event_id:UInt64 = 0;
-    var user_id:UInt64 = 0;
+    public var user_name:DataVar<String> = DataVar<String>("user_name", "")
+    public var comment:DataVar<String> = DataVar<String>("comment", "")
+    public var datetime:DateDataVar<Date> = DateDataVar<Date>("datetime", Date())
     
-    // string
-    var user_name:String? = nil;
-    var comment:String? = nil;
-    var datetime:Date = Date();
+    public override func jsonEncodedString() throws -> String {
+        do
+        {
+            return try ConvertToJsonDic([id, event_id, user_id, user_name, comment, datetime]).jsonEncodedString()
+        }
+        catch
+        {
+            fatalError("\(error)")
+        }
+    }
 }

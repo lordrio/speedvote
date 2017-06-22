@@ -20,6 +20,7 @@
 import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
+import Foundation
 
 // An example request handler.
 // This 'handler' function can be referenced directly in the configuration below.
@@ -72,25 +73,50 @@ c.FetchUser("pipi3")
 let x = try? c.userData.jsonEncodedString()
 debugPrint(x as Any)
 
-/*let ctrl = EventController()
+/*
+let ctrl = ChoiceController()
 for i in 1...5
 {
-    let j = EventData()
+    let j = ChoicesData()
     j.title.Value = "title \(i)"
     j.description.Value = "desc \(i)"
-    j.status.Value = Status.NotStarted
-    j.user_id.Value = c.userData.id.Value
-    ctrl.CreateEvent(j)
-}*/
+    j.gps.Value = "gps"
+    j.event_id.Value = 6 as UInt64? ?? 0;
+    j.time.Value = Date()
+    ctrl.CreateChoice(j)
+}
+*/
 
+/*
+let ctrl = CommentController()
+for i in 1...5
+{
+    let j = CommentData()
+    j.comment.Value = "title \(i)"
+    j.user_id.Value = 15 as UInt64? ?? 0;
+    j.event_id.Value = 6 as UInt64? ?? 0;
+    j.datetime.Value = Date()
+    ctrl.CreateComment(j)
+}
+ */
 
-let list = EventController().GetAllEvents(c.userData.id.Value as! UInt64)
+/*
+let ctrl = VoterController()
+for i in 1...5
+{
+    let j = VoterData()
+    j.user_id.Value = 15 as UInt64? ?? 0;
+    j.event_id.Value = 6 as UInt64? ?? 0;
+    j.choice_id.Value = 1 as UInt64? ?? 0;
+    ctrl.CreateVoter(j)
+}
+*/
+
+let list = VoterController().LoadAllVoters(6)
 do
 {
-    Log.info(message: "here")
     let str = try ["data":list].jsonEncodedString()
     Log.info(message: " + " + str)
-    Log.info(message: "here")
 }
 catch
 {
