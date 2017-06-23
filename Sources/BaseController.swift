@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PerfectHTTP
 
 class BaseController
 {
@@ -62,5 +63,30 @@ class BaseController
         }
         
         return res
+    }
+    
+    // handler
+    internal func Handler(data: [String:Any]) throws -> RequestHandler
+    {
+        return {
+            request, response in
+            let responder = "{\"error\": \"unknown error\"}"
+            // Respond with a simple message.
+            response.setHeader(.contentType, value: "application/json")
+            response.appendBody(string: responder)
+            // Ensure that response.completed() is called when your processing is done.
+            response.completed()
+        }
+    }
+    
+    func parseToken(fromHeader header: String) -> String?
+    {
+        let bearer = "Bearer "
+        if let range = header.range(of: bearer) {
+            return header.replacingCharacters(in: range, with: "")
+        } else {
+            return nil
+        }
+        
     }
 }

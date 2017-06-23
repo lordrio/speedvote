@@ -28,8 +28,8 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	return {
 		request, response in
 		// Respond with a simple message.
-		response.setHeader(.contentType, value: "text/html")
-		response.appendBody(string: "<html><title>Hello, world!</title><body>Hello, world!</body></html>")
+		response.setHeader(.contentType, value: "application/json")
+		response.appendBody(string: "")
 		// Ensure that response.completed() is called when your processing is done.
 		response.completed()
 	}
@@ -38,19 +38,11 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 // Configuration data for two example servers.
 // This example configuration shows how to launch one or more servers 
 // using a configuration dictionary.
-
-let port1 = 8080, port2 = 8181
-
 let confData = [
 	"servers": [
-		// Configuration data for one server which:
-		//	* Serves the hello world message at <host>:<port>/
-		//	* Serves static files out of the "./webroot"
-		//		directory (which must be located in the current working directory).
-		//	* Performs content compression on outgoing data when appropriate.
 		[
 			"name":"localhost",
-			"port":port1,
+			"port":8080,
 			"routes":[
 				["method":"get", "uri":"/", "handler":handler],
 				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.staticFiles,
@@ -68,10 +60,12 @@ let confData = [
 	]
 ]
 
+/*
 let c = UserController()
 c.FetchUser("pipi3")
 let x = try? c.userData.jsonEncodedString()
 debugPrint(x as Any)
+ */
 
 /*
 let ctrl = ChoiceController()
@@ -112,6 +106,7 @@ for i in 1...5
 }
 */
 
+/*
 let list = VoterController().LoadAllVoters(6)
 do
 {
@@ -122,6 +117,7 @@ catch
 {
     fatalError("\(error)")
 }
+*/
 
 #if false
 do {
