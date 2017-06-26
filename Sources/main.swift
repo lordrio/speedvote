@@ -167,7 +167,7 @@ if true
     let authJSONRoutes = makeJSONAuthRoutes("/api/v1")
     
     // Add the routes to the server.
-    server.addRoutes(authWebRoutes)
+    //server.addRoutes(authWebRoutes)
     server.addRoutes(authJSONRoutes)
     
     // Adding a test route
