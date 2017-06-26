@@ -163,7 +163,7 @@ if true
     let server = HTTPServer()
     
     // Register routes and handlers
-    let authWebRoutes = makeWebAuthRoutes()
+    //let authWebRoutes = makeWebAuthRoutes()
     let authJSONRoutes = makeJSONAuthRoutes("/api/v1")
     
     // Add the routes to the server.
@@ -173,9 +173,6 @@ if true
     // Adding a test route
     var routes = Routes()
     routes.add(method: .get, uri: "/api/v1/test", handler: AuthHandlersJSON.testHandler)
-    
-    
-    
     
     // An example route where authentication will be enforced
     routes.add(method: .get, uri: "/api/v1/check", handler: {
@@ -216,6 +213,8 @@ if true
     
     // Add the routes to the server.
     server.addRoutes(routes)
+    
+    server.addRoutes(SpeedVoteRoutes())
     
     
     // Setup logging

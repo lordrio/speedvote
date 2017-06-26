@@ -84,20 +84,15 @@ class UserController : BaseController
         return {
             request, response in
             
-            /*var responder = "{\"error\": \"failed to create\"}"
+            var responder = "{\"error\": \"failed to create\"}"
             
             if let authHeader = request.header(.authorization) {
                 if let token = self.parseToken(fromHeader: authHeader) {
                     
                     do {
                         if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
-                            let name = json["item"]
-                            let dueDuate = json["dueDate"]
-                            let date = getDate(fromSQLDateTime: dueDuate ?? "")
-                            
-                            if let hasName = name {
-                                responder = Items().create(name: hasName, dueDate: date, forToken: token)
-                            }
+                            debugPrint(json)
+                            responder = json
                         }
                         
                     } catch {
@@ -109,7 +104,7 @@ class UserController : BaseController
                     response.completed()
                     
                 }
-            }*/
+            }
             
             response.setHeader(.contentType, value: "application/json")
             response.appendBody(string: "{\"error\": \"failed to create for user\"}")
