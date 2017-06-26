@@ -242,7 +242,7 @@ if true
     server.serverPort = 8181
     
     // Where to serve static files from
-    server.documentRoot = "./webroot"
+    //server.documentRoot = "./webroot"
     
     do {
         // Launch the HTTP server.
