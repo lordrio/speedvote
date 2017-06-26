@@ -30,7 +30,7 @@ public func SpeedVoteRoutes() -> Routes {
         response.completed()
     })
     
-    routes.add(method: .get, uri: "/api/v1/user", handler: UserController().Handler)
+    //routes.add(method: .get, uri: "/api/v1/user", handler: UserController().Handler)
     
     return routes
 }
