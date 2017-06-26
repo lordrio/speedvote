@@ -21,7 +21,7 @@ class UserData : BaseData
      |name|varchar(45)|Yes|NULL
      == Dumping data for table Users
      */
-    override var _tableName:String { get{ return "Users" } }
+    override var _tableName:String { get{ return "MyUsers" } }
     
     public var id:DataVar<UInt64> = DataVar<UInt64>("id", 0)
     public var name:DataVar<String> = DataVar<String>("name", "")
