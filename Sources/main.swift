@@ -20,6 +20,12 @@
 import PerfectLib
 import PerfectHTTP
 import PerfectHTTPServer
+
+import StORM
+import MySQLStORM
+import PerfectTurnstileMySQL
+import PerfectRequestLogger
+import TurnstilePerfect
 import Foundation
 
 // An example request handler.
@@ -35,30 +41,30 @@ func handler(data: [String:Any]) throws -> RequestHandler {
 	}
 }
 
-// Configuration data for two example servers.
-// This example configuration shows how to launch one or more servers 
-// using a configuration dictionary.
-let confData = [
-	"servers": [
-		[
-			"name":"localhost",
-			"port":8080,
-			"routes":[
-				["method":"get", "uri":"/", "handler":handler],
-				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.staticFiles,
-				 "documentRoot":"./webroot",
-				 "allowResponseFilters":true]
-			],
-			"filters":[
-				[
-				"type":"response",
-				"priority":"high",
-				"name":PerfectHTTPServer.HTTPFilter.contentCompression,
-				]
-			]
-		]
-	]
-]
+//// Configuration data for two example servers.
+//// This example configuration shows how to launch one or more servers 
+//// using a configuration dictionary.
+//let confData = [
+//	"servers": [
+//		[
+//			"name":"localhost",
+//			"port":8080,
+//			"routes":[
+//				["method":"get", "uri":"/", "handler":handler],
+//				["method":"get", "uri":"/**", "handler":PerfectHTTPServer.HTTPHandler.staticFiles,
+//				 "documentRoot":"./webroot",
+//				 "allowResponseFilters":true]
+//			],
+//			"filters":[
+//				[
+//				"type":"response",
+//				"priority":"high",
+//				"name":PerfectHTTPServer.HTTPFilter.contentCompression,
+//				]
+//			]
+//		]
+//	]
+//]
 
 /*
 let c = UserController()
@@ -119,11 +125,125 @@ catch
 }
 */
 
-#if false
-do {
-	// Launch the servers based on the configuration data.
-	try HTTPServer.launch(configurationData: confData)
-} catch {
-	fatalError("\(error)") // fatal error launching one of the servers
+//#if false
+//do {
+//	// Launch the servers based on the configuration data.
+//	try HTTPServer.launch(configurationData: confData)
+//} catch {
+//	fatalError("\(error)") // fatal error launching one of the servers
+//}
+//#endif
+
+if true
+{
+    StORMdebug = true
+    
+    let pturnstile = TurnstilePerfectRealm()
+    
+    
+    // Set the connection vatiable
+    //connect = SQLiteConnect("./authdb")
+    SQLiteConnector.db = "./authdb"
+    RequestLogFile.location = "./http_log.txt"
+    
+    // Set up the Authentication table
+    let auth = AuthAccount()
+    try? auth.setup()
+    
+    // Connect the AccessTokenStore
+    tokenStore = AccessTokenStore()
+    try? tokenStore?.setup()
+    
+    //let facebook = Facebook(clientID: "CLIENT_ID", clientSecret: "CLIENT_SECRET")
+    //let google = Google(clientID: "CLIENT_ID", clientSecret: "CLIENT_SECRET")
+    // Create HTTP server.
+    let server = HTTPServer()
+    
+    // Register routes and handlers
+    let authWebRoutes = makeWebAuthRoutes()
+    let authJSONRoutes = makeJSONAuthRoutes("/api/v1")
+    
+    // Add the routes to the server.
+    server.addRoutes(authWebRoutes)
+    server.addRoutes(authJSONRoutes)
+    
+    // Adding a test route
+    var routes = Routes()
+    routes.add(method: .get, uri: "/api/v1/test", handler: AuthHandlersJSON.testHandler)
+    
+    
+    
+    
+    // An example route where authentication will be enforced
+    routes.add(method: .get, uri: "/api/v1/check", handler: {
+        request, response in
+        response.setHeader(.contentType, value: "application/json")
+        
+        var resp = [String: String]()
+        resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
+        resp["authDetails"] = "DETAILS: \(request.user.authDetails)"
+        
+        do {
+            try response.setBody(json: resp)
+        } catch {
+            print(error)
+        }
+        response.completed()
+    })
+    
+    
+    // An example route where auth will not be enforced
+    routes.add(method: .get, uri: "/api/v1/nocheck", handler: {
+        request, response in
+        response.setHeader(.contentType, value: "application/json")
+        
+        var resp = [String: String]()
+        resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
+        resp["authDetails"] = "DETAILS: \(request.user.authDetails)"
+        
+        do {
+            try response.setBody(json: resp)
+        } catch {
+            print(error)
+        }
+        response.completed()
+    })
+    
+    
+    
+    // Add the routes to the server.
+    server.addRoutes(routes)
+    
+    
+    // Setup logging
+    let myLogger = RequestLogger()
+    
+    // add routes to be checked for auth
+    var authenticationConfig = AuthenticationConfig()
+    authenticationConfig.include("/api/v1/check")
+    authenticationConfig.exclude("/api/v1/login")
+    authenticationConfig.exclude("/api/v1/register")
+    
+    let authFilter = AuthFilter(authenticationConfig)
+    
+    // Note that order matters when the filters are of the same priority level
+    server.setRequestFilters([pturnstile.requestFilter])
+    server.setResponseFilters([pturnstile.responseFilter])
+    
+    server.setRequestFilters([(authFilter, .high)])
+    
+    server.setRequestFilters([(myLogger, .high)])
+    server.setResponseFilters([(myLogger, .low)])
+    
+    server.serverPort = 8080
+    
+    // Where to serve static files from
+    server.documentRoot = "./webroot"
+    
+    do {
+        // Launch the HTTP server.
+        try server.start()
+    } catch PerfectError.networkError(let err, let msg) {
+        print("Network error thrown: \(err) \(msg)")
+    }
 }
-#endif
