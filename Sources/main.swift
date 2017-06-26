@@ -22,8 +22,8 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 import StORM
-import SQLiteStORM
-import PerfectTurnstileSQLite
+import MySQLStORM
+import PerfectTurnstileMySQL
 import PerfectRequestLogger
 import TurnstilePerfect
 import Foundation
@@ -138,13 +138,17 @@ if true
 {
     StORMdebug = true
     
+    // Used later in script for the Realm and how the user authenticates.
     let pturnstile = TurnstilePerfectRealm()
     
     
-    // Set the connection vatiable
-    //connect = SQLiteConnect("./authdb")
-    SQLiteConnector.db = "./authdb"
-    RequestLogFile.location = "./http_log.txt"
+    MySQLConnector.host        = "43.255.154.110"
+    MySQLConnector.username    = "speedvote"
+    MySQLConnector.password    = "12345"
+    MySQLConnector.database    = "speedvote"
+    MySQLConnector.port        = 80
+    
+    
     
     // Set up the Authentication table
     let auth = AuthAccount()
@@ -235,7 +239,8 @@ if true
     server.setRequestFilters([(myLogger, .high)])
     server.setResponseFilters([(myLogger, .low)])
     
-    server.serverPort = 8080
+    // Set a listen port of 8181
+    server.serverPort = 8181
     
     // Where to serve static files from
     server.documentRoot = "./webroot"
