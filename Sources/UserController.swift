@@ -92,7 +92,7 @@ class UserController : BaseController
                     do {
                         if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
                             debugPrint(json)
-                            responder = json
+                            responder = " {\"data \": \"\(json)\"}"
                         }
                         
                     } catch {
