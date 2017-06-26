@@ -22,8 +22,8 @@ import PerfectHTTP
 import PerfectHTTPServer
 
 import StORM
-import MySQLStORM
-import PerfectTurnstileMySQL
+import SQLiteStORM
+import PerfectTurnstileSQLite
 import PerfectRequestLogger
 import TurnstilePerfect
 import Foundation
