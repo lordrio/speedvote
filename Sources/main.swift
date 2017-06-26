@@ -146,7 +146,6 @@ if true
     MySQLConnector.username    = "speedvote"
     MySQLConnector.password    = "12345"
     MySQLConnector.database    = "speedvote"
-    MySQLConnector.port        = 80
     
     
     
