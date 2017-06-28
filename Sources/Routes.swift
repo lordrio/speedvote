@@ -20,7 +20,7 @@ public func SpeedVoteRoutes() -> Routes {
         
         var resp = [String: String]()
         resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
-        resp["authDetails"] = "DETAILS: \(request.user.authDetails)"
+        resp["authDetails"] = "DETAILS: \(String(describing: request.user.authDetails))"
         
         do {
             try response.setBody(json: resp)
@@ -30,7 +30,7 @@ public func SpeedVoteRoutes() -> Routes {
         response.completed()
     })
     
-    //routes.add(method: .get, uri: "/api/v1/user", handler: UserController().Handler)
+    routes.add(method: .get, uri: "/api/v1/user", handler: try! UserController().Handler())
     
     return routes
 }

@@ -79,16 +79,22 @@ class UserController : BaseController
         userData.name.Parse([ "name" : Name ])
     }
     
-    override func Handler(data: [String:Any]) throws -> RequestHandler
+    override func Handler() throws -> RequestHandler
     {
         return {
             request, response in
             
             var responder = "{\"error\": \"failed to create\"}"
             
+            var resp = [String: String]()
+            resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
+            resp["authDetails"] = "DETAILS: \(String(describing: request.user.authDetails))"
+            debugPrint(String(describing: resp))
+            
             if let authHeader = request.header(.authorization) {
+                debugPrint(String(describing: authHeader))
                 if let token = self.parseToken(fromHeader: authHeader) {
-                    
+                    debugPrint(String(describing: token))
                     do {
                         if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
                             debugPrint(json)

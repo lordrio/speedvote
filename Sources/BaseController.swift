@@ -66,7 +66,7 @@ class BaseController
     }
     
     // handler
-    internal func Handler(data: [String:Any]) throws -> RequestHandler
+    internal func Handler() throws -> RequestHandler
     {
         return {
             request, response in

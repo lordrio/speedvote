@@ -1,2 +1,2 @@
 swift build
-.build/debug/PerfectTemplate
+sudo .build/debug/PerfectTemplate

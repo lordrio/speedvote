@@ -163,11 +163,11 @@ if true
     let server = HTTPServer()
     
     // Register routes and handlers
-    //let authWebRoutes = makeWebAuthRoutes()
+    let authWebRoutes = makeWebAuthRoutes()
     let authJSONRoutes = makeJSONAuthRoutes("/api/v1")
     
     // Add the routes to the server.
-    //server.addRoutes(authWebRoutes)
+    server.addRoutes(authWebRoutes)
     server.addRoutes(authJSONRoutes)
     
     // Adding a test route
@@ -181,7 +181,7 @@ if true
         
         var resp = [String: String]()
         resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
-        resp["authDetails"] = "DETAILS: \(request.user.authDetails)"
+        resp["authDetails"] = "DETAILS: \(String(describing: request.user.authDetails))"
         
         do {
             try response.setBody(json: resp)
@@ -199,7 +199,7 @@ if true
         
         var resp = [String: String]()
         resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
-        resp["authDetails"] = "DETAILS: \(request.user.authDetails)"
+        resp["authDetails"] = "DETAILS: \(String(describing: request.user.authDetails))"
         
         do {
             try response.setBody(json: resp)
