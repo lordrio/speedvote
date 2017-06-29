@@ -163,3 +163,57 @@
 [DEBUG] [3d934462-6342-42cb-8791-79b4c80aa7be] [2017-06-28 16:47:47 GMT+09:00] StORM Debug: SELECT COUNT(*) AS counter FROM users   WHERE username = ? : testd
 [DEBUG] [c3d2eb6d-fe79-4d68-8ac0-58609aea3288] [2017-06-28 16:47:47 GMT+09:00] StORM Debug: SELECT uniqueID,username,password,facebookID,googleID,firstname,lastname,email FROM users   WHERE username = ?  LIMIT 1 : testd
 [INFO] [dca352a9-c33b-4999-baed-e655fce36bd6] [2017-06-28 16:47:48 GMT+09:00] insert statement: INSERT INTO tokens (token,userid,created,updated,idle) VALUES(?,?,?,?,?), params: ["e16sSX7K6E2O1g9aScI4wA", "NR3pwCfHM2SqjqWldMwtag", "520328868", "520328868", "86400"]
+[DEBUG] [fd758fec-8ed3-4304-9865-9cb00411812c] [2017-06-28 16:59:33 GMT+09:00] StORM Debug: SELECT COUNT(*) AS counter FROM tokens   WHERE token = ? : RgZ3NdjDxQnJ62kB_OsXYA
+[DEBUG] [55e93f2f-fab3-4265-a5cc-5bf0d78ab20e] [2017-06-28 16:59:34 GMT+09:00] StORM Debug: SELECT token,userid,created,updated,idle FROM tokens   WHERE token = ?  LIMIT 50 : RgZ3NdjDxQnJ62kB_OsXYA
+[INFO] [88c4a722-2c2e-45d1-9dc4-4fb44c78dfcc] [2017-06-28 17:04:40 GMT+09:00] Running setup: users
+[INFO] [f8d456ad-313d-47cb-87d6-31ccd9598255] [2017-06-28 17:04:40 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [aa4952a6-d830-446b-8aff-91199adaaddf] [2017-06-28 17:04:41 GMT+09:00] Running setup: tokens
+[INFO] [5c592d98-2dc7-4884-a13d-01c80967cd31] [2017-06-28 17:04:41 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [d06eb313-ad6b-4f86-9dae-d881d288fe58] [2017-06-28 17:05:21 GMT+09:00] Running setup: users
+[INFO] [da148275-1b6a-4ef5-accb-ffd6ecaf5e0f] [2017-06-28 17:05:21 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [5102d1be-31a1-4d47-a076-d263e6d8e4f7] [2017-06-28 17:05:22 GMT+09:00] Running setup: tokens
+[INFO] [4fa1bf69-104e-441e-bd02-98519244e1d5] [2017-06-28 17:05:22 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [7c6e3a4b-cde4-40e1-abee-5d6a12450eeb] [2017-06-28 17:10:15 GMT+09:00] Running setup: users
+[INFO] [46ca637a-e1f8-45da-940c-1161760ad5e8] [2017-06-28 17:10:15 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [bba7cc88-7177-46e1-b203-64bcb4c1509c] [2017-06-28 17:10:15 GMT+09:00] Running setup: tokens
+[INFO] [093ac96f-d14e-41eb-b2b3-5cd8f4e89591] [2017-06-28 17:10:15 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [dbed033d-1661-4b2d-a749-603ee61d8c52] [2017-06-28 17:11:50 GMT+09:00] Running setup: users
+[INFO] [1eba1303-b453-4f35-8eec-d243a9b86b11] [2017-06-28 17:11:50 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [adfd2924-5e9a-44d6-8abe-b0bbad17cc0f] [2017-06-28 17:11:50 GMT+09:00] Running setup: tokens
+[INFO] [44d7d8dd-9f5a-45da-9f23-7dffa3532275] [2017-06-28 17:11:50 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [0e804aa8-451f-428c-be46-9a87e9cf526f] [2017-06-28 17:14:46 GMT+09:00] Running setup: users
+[INFO] [edb992cf-980c-449b-93eb-b79772b7f9ad] [2017-06-28 17:14:46 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [a148802e-e7a2-486e-9c7a-4c289a362b9c] [2017-06-28 17:14:46 GMT+09:00] Running setup: tokens
+[INFO] [a993d15f-1d03-4cf3-9c5c-ea07ff28de3b] [2017-06-28 17:14:46 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [55c1efc3-1cc4-42f7-8674-f3094ab26948] [2017-06-28 17:22:06 GMT+09:00] Running setup: users
+[INFO] [f609eabc-bd44-4a1e-b246-7de3a690b5a5] [2017-06-28 17:22:06 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [ebf0de4e-4471-4429-84cc-02903ea72027] [2017-06-28 17:22:06 GMT+09:00] Running setup: tokens
+[INFO] [dfba07a5-dc14-4822-875b-bcda6409ad68] [2017-06-28 17:22:06 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [3dcef0df-6f53-424d-b352-07ca7933fa2c] [2017-06-28 17:23:59 GMT+09:00] Running setup: users
+[INFO] [d8980d3b-ef80-4eaa-9fbf-a26aa0b0cc26] [2017-06-28 17:23:59 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [fb467baa-7016-417c-ba5e-d0273c5c9058] [2017-06-28 17:24:00 GMT+09:00] Running setup: tokens
+[INFO] [cef02e47-088a-4290-acbb-0be108f794a6] [2017-06-28 17:24:00 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [1186ce2d-1df3-42ad-aa27-8084e4621014] [2017-06-28 17:54:43 GMT+09:00] Running setup: users
+[INFO] [21d1c23d-583b-4f55-9ed2-ba7effc82ebc] [2017-06-28 17:54:43 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [1223f393-3f90-4c42-8e88-a3f32f0de646] [2017-06-28 17:54:43 GMT+09:00] Running setup: tokens
+[INFO] [998b2899-27a4-4225-9f3b-5408eb62c448] [2017-06-28 17:54:43 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [4d1ffe2b-b155-4570-9d63-da95411b8227] [2017-06-28 17:56:40 GMT+09:00] Running setup: users
+[INFO] [db68abe1-8990-4e16-b734-346bea4ff169] [2017-06-28 17:56:40 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [ea877c6e-9f0a-45d7-9aaf-943660753f9f] [2017-06-28 17:56:40 GMT+09:00] Running setup: tokens
+[INFO] [524beb14-7933-4a8a-a2ea-f65e965baf59] [2017-06-28 17:56:40 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [e6ef3a0e-f84c-4107-a105-006a7a351312] [2017-06-28 17:59:10 GMT+09:00] Running setup: users
+[INFO] [104afaa4-1e12-4369-b159-a9989dcb54c7] [2017-06-28 17:59:10 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [0e92a211-75b7-4334-9b60-75766c16d2ba] [2017-06-28 17:59:11 GMT+09:00] Running setup: tokens
+[INFO] [b2082dfd-737c-4c79-84b6-59f26b4b3518] [2017-06-28 17:59:11 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [6a59ed13-f914-4f20-957e-716616f532ab] [2017-06-29 11:24:44 GMT+09:00] Running setup: users
+[INFO] [cf83b824-44a2-4d23-bf24-a7b2d89e6c03] [2017-06-29 11:24:44 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [d58be459-9aca-40eb-b17f-584d1b7c6b73] [2017-06-29 11:24:45 GMT+09:00] Running setup: tokens
+[INFO] [0885566a-90ec-40ec-b409-3bd25fba4164] [2017-06-29 11:24:45 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [e10dcc6f-8025-4a7f-a859-7166184b528a] [2017-06-29 11:25:22 GMT+09:00] Running setup: users
+[INFO] [f1368f7d-38f2-44b8-be61-5093d78b619a] [2017-06-29 11:25:22 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [feaffe29-0a6d-4c85-83a1-ca55a9eebdc9] [2017-06-29 11:25:23 GMT+09:00] Running setup: tokens
+[INFO] [883eb7bb-c1f0-4a61-8a25-5d7e844c6a43] [2017-06-29 11:25:23 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));
+[INFO] [f97e188d-96bd-4573-85b3-50a025dcb478] [2017-06-29 11:27:09 GMT+09:00] Running setup: users
+[INFO] [f9ea9671-a81d-4b41-82a8-3d8546d27532] [2017-06-29 11:27:09 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS users (`uniqueID` varchar(255) NOT NULL, `username` text, `password` text, `facebookID` text, `googleID` text, `firstname` text, `lastname` text, `email` text, PRIMARY KEY (`uniqueID`));
+[INFO] [b6bad2a6-c6f9-44f3-ba32-047faaa6d20c] [2017-06-29 11:27:09 GMT+09:00] Running setup: tokens
+[INFO] [b1f8fe99-79c4-4d0f-842a-7074fb1d6fa1] [2017-06-29 11:27:09 GMT+09:00] createStatement: CREATE TABLE IF NOT EXISTS tokens (`token` varchar(255) NOT NULL, `userid` text, `created` int, `updated` int, `idle` int, PRIMARY KEY (`token`));

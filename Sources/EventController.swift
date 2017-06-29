@@ -8,6 +8,7 @@
 
 import Foundation
 import PerfectLib
+import PerfectHTTP
 
 class EventController: BaseController
 {
@@ -69,5 +70,119 @@ class EventController: BaseController
         
         return res
     }
-
+    
+    public func CreateHandler() throws -> RequestHandler
+    {
+        return {
+            request, response in
+            
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
+            
+            var responder = ["error": "unknown error"] as [String:Any]
+            
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    if let uuid = json["token"] {
+                        let user = UserController()
+                        user.LoadUser(uuid)
+                        if user.IsUserValid()
+                        {
+                            let event = EventData()
+                            if let item = json["title"]
+                            {
+                                event.title.Value = item
+                            }
+                            
+                            if let item = json["description"]
+                            {
+                                event.description.Value = item
+                            }
+                            
+                            event.user_id.Value = user.userData.id.Value as! UInt64
+                            
+                            event.status.Value = Status.NotStarted
+                            
+                            self.CreateEvent(event)
+                            
+                            responder = ["msg": "event created"]
+                        }
+                    }
+                }
+                
+            } catch {
+                responder = ["error": "failed to create for event"]
+            }
+            
+            response.setHeader(.contentType, value: "application/json")
+            let _ = try? response.setBody(json: responder)
+            response.completed()
+        }
+    }
+    
+    public func GetAllHandler() throws -> RequestHandler
+    {
+        return {
+            request, response in
+            
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
+            
+            var responder = ["error": "unknown error"] as [String:Any]
+            
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    if let uuid = json["token"] {
+                        let user = UserController()
+                        user.LoadUser(uuid)
+                        if user.IsUserValid()
+                        {
+                            let events = self.GetAllEvents(user.userData.id.GetValue() as! UInt64)
+                            responder = ["data" : events]
+                        }
+                    }
+                }
+                
+            } catch {
+                responder = ["error": "failed to get event"]
+            }
+            
+            response.setHeader(.contentType, value: "application/json")
+            let _ = try? response.setBody(json: responder)
+            response.completed()
+        }
+    }
+    
+    public func GetHandler() throws -> RequestHandler
+    {
+        return {
+            request, response in
+            
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
+            
+            var responder = ["error": "unknown error"] as [String:Any]
+            
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    
+                    self.LoadEvent(UInt64(json["event_id"]!)!)
+                    responder = ["data" : self.event.JSON()]
+                }
+                
+            } catch {
+                responder = ["error": "failed to get event"]
+            }
+            
+            response.setHeader(.contentType, value: "application/json")
+            let _ = try? response.setBody(json: responder)
+            response.completed()
+        }
+    }
 }

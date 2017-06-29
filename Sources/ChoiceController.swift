@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PerfectHTTP
 
 class ChoiceController: BaseController
 {
@@ -56,5 +57,127 @@ class ChoiceController: BaseController
             
             return true
         })
+    }
+    
+    public func CreateHandler() throws -> RequestHandler
+    {
+        return {
+            request, response in
+            
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
+            
+            var responder = ["error": "unknown error"] as [String:Any]
+            
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    if let uuid = json["token"] {
+                        let user = UserController()
+                        user.LoadUser(uuid)
+                        if user.IsUserValid()
+                        {
+                            let choice = ChoicesData()
+                            if let item = json["title"]
+                            {
+                                choice.title.Value = item
+                            }
+                            
+                            if let item = json["description"]
+                            {
+                                choice.description.Value = item
+                            }
+                            
+                            if let item = json["event_id"]
+                            {
+                                choice.event_id.Value = UInt64(item)!
+                            }
+                            
+                            if let item = json["gps"]
+                            {
+                                choice.gps.Value = item
+                            }
+                            
+                            if let item = json["time"]
+                            {
+                                choice.time.Value = item
+                            }
+
+                            self.CreateChoice(choice)
+                            
+                            responder = ["msg": "choice created"]
+                        }
+                    }
+                }
+                
+            } catch {
+                responder = ["error": "failed to create for choice"]
+            }
+            
+            response.setHeader(.contentType, value: "application/json")
+            let _ = try? response.setBody(json: responder)
+            response.completed()
+        }
+    }
+    
+    public func GetAllHandler() throws -> RequestHandler
+    {
+        return {
+            request, response in
+            
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
+            
+            var responder = ["error": "unknown error"] as [String:Any]
+            
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    if let item = json["event_id"]
+                    {
+                        let choices = self.LoadAllChoices(UInt64(item)!)
+                        responder = ["data" : choices]
+                    }
+                }
+                
+            } catch {
+                responder = ["error": "failed to get event"]
+            }
+            
+            response.setHeader(.contentType, value: "application/json")
+            let _ = try? response.setBody(json: responder)
+            response.completed()
+        }
+    }
+    
+    public func GetHandler() throws -> RequestHandler
+    {
+        return {
+            request, response in
+            
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
+            
+            var responder = ["error": "unknown error"] as [String:Any]
+            
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    
+                    let choice = self.LoadChoice(UInt64(json["choice_id"]!)!)
+                    responder = ["data" : choice.JSON()]
+                }
+                
+            } catch {
+                responder = ["error": "failed to get event"]
+            }
+            
+            response.setHeader(.contentType, value: "application/json")
+            let _ = try? response.setBody(json: responder)
+            response.completed()
+        }
     }
 }

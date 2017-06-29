@@ -18,6 +18,16 @@ class UserController : BaseController
         _ = GrabWithDataVar([userData.id, userData.name, userData.uuid], whereStr: "id = \"\(ident)\"", base: userData)
     }
     
+    public func LoadUser(_ uuid: String)
+    {
+        _ = GrabWithDataVar([userData.id, userData.name, userData.uuid], whereStr: "uuid = \"\(uuid)\"", base: userData)
+    }
+    
+    public func IsUserValid() -> Bool
+    {
+        return userData.id.Value as! UInt64 > 0
+    }
+    
     func CreateEmptyUserWithUUID(_ Uuid:String)
     {
         _ = Transaction { (sql) in
@@ -26,7 +36,7 @@ class UserController : BaseController
             {
                 return false
             }
-            let query = CreateInsert(userData._tableName, val: ["name":"無名", "uuid":userData.uuid.GetValue()])
+            let query = CreateInsert(userData._tableName, val: ["name":"無名", "uuid":Uuid])
             guard sql.query(statement: query)
                 else
             {
@@ -84,36 +94,31 @@ class UserController : BaseController
         return {
             request, response in
             
-            var responder = "{\"error\": \"failed to create\"}"
+            if let json = try? request.postBodyString?.jsonDecode() as? [String: String] {
+                debugPrint(String(describing: json))
+            }
             
-            var resp = [String: String]()
-            resp["authenticated"] = "AUTHED: \(request.user.authenticated)"
-            resp["authDetails"] = "DETAILS: \(String(describing: request.user.authDetails))"
-            debugPrint(String(describing: resp))
+            var responder = ["error": "unknown error"] as [String:Any]
             
-            if let authHeader = request.header(.authorization) {
-                debugPrint(String(describing: authHeader))
-                if let token = self.parseToken(fromHeader: authHeader) {
-                    debugPrint(String(describing: token))
-                    do {
-                        if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
-                            debugPrint(json)
-                            responder = " {\"data \": \"\(json)\"}"
+            do {
+                if let json = try request.postBodyString?.jsonDecode() as? [String: String] {
+                    debugPrint(json)
+                    if let uuid = json["token"] {
+                        self.FetchUser(uuid)
+                        if self.IsUserValid() // just registered
+                        {
+                            self.FetchUser(uuid)
                         }
-                        
-                    } catch {
-                        responder = "{\"error\": \"Failed to create\"}"
+                        responder = ["data": self.userData.JSON()]
                     }
-                    
-                    response.setHeader(.contentType, value: "application/json")
-                    response.appendBody(string: responder)
-                    response.completed()
-                    
                 }
+                
+            } catch {
+                responder = ["error": "failed to create for user"]
             }
             
             response.setHeader(.contentType, value: "application/json")
-            response.appendBody(string: "{\"error\": \"failed to create for user\"}")
+            let _ = try? response.setBody(json: responder)
             response.completed()
         }
     }

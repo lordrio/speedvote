@@ -30,7 +30,18 @@ public func SpeedVoteRoutes() -> Routes {
         response.completed()
     })
     
-    routes.add(method: .get, uri: "/api/v1/user", handler: try! UserController().Handler())
+    // users
+    routes.add(method: .post, uri: "/api/v1/user", handler: try! UserController().Handler())
+    
+    // events
+    routes.add(method: .post, uri: "/api/v1/event", handler: try! EventController().CreateHandler())
+    routes.add(method: .post, uri: "/api/v1/event_single", handler: try! EventController().GetHandler())
+    routes.add(method: .post, uri: "/api/v1/event_all", handler: try! EventController().GetAllHandler())
+    
+    // choices
+    routes.add(method: .post, uri: "/api/v1/choice", handler: try! ChoiceController().CreateHandler())
+    routes.add(method: .post, uri: "/api/v1/choice_single", handler: try! ChoiceController().GetHandler())
+    routes.add(method: .post, uri: "/api/v1/choice_all", handler: try! ChoiceController().GetAllHandler())
     
     return routes
 }

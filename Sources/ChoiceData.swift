@@ -43,4 +43,9 @@ class ChoicesData : BaseData
             fatalError("\(error)")
         }
     }
+    
+    public func JSON() -> [String:Any]
+    {
+        return ConvertToJsonDic([id, title, description, event_id, gps, time])
+    }
 }

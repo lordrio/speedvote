@@ -37,4 +37,8 @@ class UserData : BaseData
             fatalError("\(error)")
         }
     }
+    
+    func JSON() -> [String:Any] {
+        return ["data" : ConvertToJsonDic([id, name, uuid])]
+    }
 }

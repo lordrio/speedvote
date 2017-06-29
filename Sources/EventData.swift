@@ -58,4 +58,9 @@ class EventData : BaseData
             fatalError("\(error)")
         }
     }
+    
+    public func JSON() -> [String:Any]
+    {
+        return ConvertToJsonDic([id, title, description, user_id, status, user_name])
+    }
 }
